@@ -1,7 +1,9 @@
 #define F_CPU 16000000UL // CPU Frequency Definiton
 
+
 #include <avr/io.h>      // Contains all the I/O Register Macros
 #include <util/delay.h>  // Blocking Delay
+
 
 #define USART_BAUDRATE 115200 // Desired Baud Rate // 115200, B4 9600
 #define USART_BAUDRATE_1 9600 // Desired Baud Rate // 115200, B4 9600
@@ -70,8 +72,10 @@ char USART_ReceivePolling() // keep this
 {
 	
 	char DataByte;
+	
 	while (( UCSR1A & (1<<RXC1)) == 0) {}; // Do nothing until data have been received
 	DataByte = UDR1 ;
+	
 	return DataByte;
 
 }
@@ -97,6 +101,7 @@ int main()
 	char LocalData;
 	
 	while(1){
+		
 	for(int i = 0; i < 500; i++){
 		
 		LocalData = USART_ReceivePolling();
@@ -125,6 +130,7 @@ int main()
 		}
 		
 	}
+		
 	
 	char LocalData[] = "AT+SEND=0,11,";
 	
@@ -135,6 +141,7 @@ int main()
 	}
 	
 	
+		
 	for(int LAT_count = 17; LAT_count < 27; LAT_count++){
 		
 		latitude[LAT_count] = GPGGA_Line[LAT_count];
@@ -142,9 +149,12 @@ int main()
 		USART_TransmitPolling(latitude[LAT_count]);
 		
 	}
+		
 	
 	USART_TransmitPolling('\r');
 	USART_TransmitPolling('\n');
+		
+		
 	_delay_ms(2000);
 	
 	
@@ -154,6 +164,8 @@ int main()
 		USART_TransmitPolling(LocalData[transmitter_count]);
 			
 	}
+		
+		
 		
 	for(int LONG_count = 30; LONG_count < 40; LONG_count++){
 		
@@ -167,9 +179,19 @@ int main()
 
 	USART_TransmitPolling('\r');
 	USART_TransmitPolling('\n');
+		
+		
 	_delay_ms(1000);
 	
 	}
+	
+	
 	return 0;
 	
 }
+
+
+
+
+
+
