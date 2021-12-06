@@ -1,11 +1,13 @@
-#define F_CPU 16000000UL // CPU Frequency Definiton
+#define F_CPU 16000000UL // CPU Frequency 
 
 #include <avr/io.h>      // Contains all the I/O Register Macros
 #include <util/delay.h>  // Blocking Delay
 
 
+
 #define USART_BAUDRATE 9600 // Desired Baud Rate // 115200, B4 9600
 #define BAUD_PRESCALER ((((F_CPU / (USART_BAUDRATE * 16UL))) - 1))
+
 
 #define ASYNCHRONOUS (0<<UMSEL00) // USART Mode Selection
 
@@ -56,7 +58,6 @@ char USART_ReceivePolling() // keep this
 {
 	
 	
-	
 	while (( UCSR0A & (1<<RXC0)) == 0) {}; // Do nothing until data have been received
 
 	
@@ -65,33 +66,44 @@ char USART_ReceivePolling() // keep this
 }
 
 
+
 void USART_TransmitPolling(char DataByte) // keep this
 {
 	
 	while (( UCSR0A & (1<<UDRE0)) == 0) {}; // Do nothing until UDR is ready
 
-	
 	UDR0 = DataByte;
 	
 }
 
+
+
 int main(void)
 {
-	
-	USART_Init();
+
+    USART_Init();
     char LocalData;
 	
-	while(1){
+    while(1){
     for(int i = 0; i < 30; i++){
-		LocalData = USART_ReceivePolling();
-		USART_TransmitPolling(LocalData);
+	LocalData = USART_ReceivePolling();
+	USART_TransmitPolling(LocalData);
 		
 	}
 	
+	    
 	USART_TransmitPolling('\r');
 	USART_TransmitPolling('\n');
+	    
 	_delay_ms(1000);
+	    
+	    
 	}
+	
 	return 0;
 }
+
+
+
+
 
