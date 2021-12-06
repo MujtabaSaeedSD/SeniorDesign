@@ -82,14 +82,18 @@ int main(void)
 {
 
     USART_Init();
+	
     char LocalData;
 	
     while(1){
+	    
+	    
     for(int i = 0; i < 30; i++){
+	    
 	LocalData = USART_ReceivePolling();
 	USART_TransmitPolling(LocalData);
 		
-	}
+    }
 	
 	    
 	USART_TransmitPolling('\r');
@@ -98,9 +102,10 @@ int main(void)
 	_delay_ms(1000);
 	    
 	    
-	}
+    }
 	
 	return 0;
+	
 }
 
 
