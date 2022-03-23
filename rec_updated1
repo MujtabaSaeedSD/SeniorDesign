@@ -1,0 +1,90 @@
+#include <TinyGPSPlus.h>
+float lat = 0, lon = 0;
+
+TinyGPSPlus gps;
+
+String gps5;
+char gps2[2] = "1";
+
+char bnn[2] = "b";
+
+void coordinate(){
+
+   
+   while(Serial2.available()){
+   
+      restart:
+     
+     
+      if(gps.encode(Serial2.read())){
+          gps.encode(Serial2.read());
+     
+           lat = gps.location.lat();
+           lon = gps.location.lng();
+           
+
+
+ 
+}
+       if(lat == 0){
+        Serial.println("hey");
+        goto restart;
+       
+     
+     }
+     else{
+      Serial.println(lat);
+      return;
+     }
+
+}
+
+}
+
+void setup() {
+ 
+  Serial2.begin(9600);
+  Serial1.begin(9600);
+  Serial.begin(9600);
+  delay(1000);
+  coordinate();
+
+}
+
+void loop() {
+   
+ 
+     
+      gps2[0] = "h";
+      gps5 = Serial1.readString();
+      gps2[0] = gps5.charAt(9);
+
+      if(gps2[0] == bnn[0]){
+     
+        delay(12000);
+
+        //delay(18000);
+ 
+     Serial1.print("AT+SEND=0,20,");
+     Serial1.print(lat, 6);
+     Serial1.print("B");
+     Serial1.println(lon, 6);
+
+     Serial.print("AT+SEND=0,20,");
+     Serial.print(lat, 6);
+     Serial.print(" ");
+     Serial.println(lon, 6);
+
+
+ 
+     
+}
+
+
+
+
+
+
+
+
+}
