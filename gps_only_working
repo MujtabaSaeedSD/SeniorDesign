@@ -1,0 +1,61 @@
+#include <TinyGPSPlus.h>
+#include <RadioLib.h>
+CC1101 radio = new Module(53, 2, RADIOLIB_NC, 3);
+
+float lat = 0, lon = 0;
+
+TinyGPSPlus gps;
+
+void coordinate(){
+
+   
+   while(Serial2.available()){
+
+      
+      restart:
+    
+     
+      if(gps.encode(Serial2.read())){
+          gps.encode(Serial2.read());
+     
+           lat = gps.location.lat();
+           lon = gps.location.lng();
+           
+
+
+ 
+}
+       if(lat == 0){
+        Serial.println("hey");
+        goto restart;
+       
+     
+     }
+     else{
+      Serial.println(lat);
+      return;
+     }
+
+}
+
+}
+
+void setup(){
+  Serial2.begin(9600);
+  Serial.begin(9600);
+
+  delay(2000);
+
+  coordinate();
+
+}
+
+
+void loop(){
+  if(gps.encode(Serial2.read())){
+    lat = gps.location.lat();
+    Serial.print(lat);
+  }
+}
+
+
