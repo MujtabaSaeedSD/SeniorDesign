@@ -1,0 +1,45 @@
+void setup() {
+ 
+  Serial.begin(115200);
+  Serial1.begin(115200);
+ 
+}
+
+void loop() {
+ 
+   
+   Serial.println("begin");
+   String rx_byte;
+   
+   while(Serial.available() == 0) {
+   }
+   
+    rx_byte = Serial.readString();
+   
+   
+    if(rx_byte.compareTo("1") == 0){
+      Serial1.println("AT+SEND=0,10,bbbbbbbbbb");
+    }
+   else{
+    return;
+   }
+
+
+   
+//unsigned long j = 0;
+
+while(1){
+ 
+   String o = Serial1.readString();
+   delay(2000);
+   Serial.print(o);
+ 
+ //  j = millis();
+   
+   
+}
+
+ 
+ //Serial.println("done");
+ //return;
+}
