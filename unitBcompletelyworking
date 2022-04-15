@@ -1,0 +1,199 @@
+#include <TinyGPSPlus.h>
+#include <RadioLib.h>
+CC1101 radio = new Module(53, 2, RADIOLIB_NC, 3);
+String x;
+float lat = 0, lon = 0;
+
+TinyGPSPlus gps;
+
+String gps5;
+char gps2[2] = "1";
+
+char bnn[2] = "b";
+
+const int stepPin = 3; // Pin definitions
+const int dirPin = 4; 
+const int switchPin = 41;
+int switchState = 0;
+
+void coordinate(){
+
+   
+   while(Serial2.available()){
+
+      
+      restart:
+    
+     
+      if(gps.encode(Serial2.read())){
+          gps.encode(Serial2.read());
+     
+           lat = gps.location.lat();
+           lon = gps.location.lng();
+           
+
+
+ 
+}
+       if(lat == 0){
+        Serial.println("hey");
+        goto restart;
+       
+     
+     }
+     else{
+      Serial.println(lat);
+      return;
+     }
+
+}
+
+}
+
+void setup() {
+  pinMode(stepPin,OUTPUT); // Output and input pin declarations
+  pinMode(dirPin,OUTPUT);
+  pinMode(switchPin, INPUT);
+  delay(500);
+  Serial.begin(9600);
+  Serial1.begin(9600);
+  Serial2.begin(9600);
+  
+ 
+
+  
+  Serial.print(F("[CC1101] Initializing ... "));
+  int state = radio.begin();
+  if (state == RADIOLIB_ERR_NONE) {
+    Serial.println(F("success!"));
+  } else {
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    while (true);
+  }
+  
+  delay(2000);
+  coordinate();
+
+}
+
+void loop() {
+  
+      static float signal_strength = 0;
+      static float max_strength = -1000; 
+      static float angle = 0;
+      static float max_angle = 0;
+      
+      
+     
+      x = Serial1.readString();
+      gps5 = Serial1.readString();
+      
+      
+     // gps2[0] = gps5.charAt(10);
+    //  gps2[0] = gps5.charAt(10);
+//      while(gps2[0] !=bnn[0]){
+//      gps5 = Serial3.readString();
+//      gps2[0] = gps5.charAt(10);
+//      Serial.println(gps2[0]);
+//      Serial3.flush();
+//      
+//      }
+      
+
+    
+    while(gps5 == NULL){
+      gps5 = Serial1.readString();
+      Serial.println(gps5);
+    }
+     
+        delay(12000);
+
+        digitalWrite(dirPin,HIGH); // Rotates the motor counter clockwise
+
+  for(int x = 0; x < 100; x++) { // 100 steps for 180 degrees
+    digitalWrite(stepPin,HIGH); 
+    delay(500);
+ 
+    digitalWrite(stepPin,LOW); 
+    delay(500);
+
+     Serial.print(F("[CC1101] Waiting for incoming transmission ... "));
+  // you can receive data as an Arduino String
+     String str;
+     int state = radio.receive(str);
+  
+     if (state == RADIOLIB_ERR_NONE) {
+    // packet was successfully received
+    Serial.println(F("success!"));
+
+//    // print the data of the packet
+//    Serial.print(F("[CC1101] Data:\t\t"));
+//    Serial.println(str);
+
+    Serial.print(F("[CC1101] RSSI:\t\t"));
+    Serial.print(radio.getRSSI());
+    Serial.println(F(" dBm"));
+    
+  } else if (state == RADIOLIB_ERR_RX_TIMEOUT) {
+    // timeout occurred while waiting for a packet
+    Serial.println(F("timeout!"));
+
+  } else if (state == RADIOLIB_ERR_CRC_MISMATCH) {
+    // packet was received, but is malformed
+    Serial.println(F("CRC error!"));
+        Serial.print(F("[CC1101] RSSI:\t\t"));
+    Serial.print(radio.getRSSI());
+    Serial.println(F(" dBm"));
+
+  } else {
+    // some other error occurred
+    Serial.print(F("failed, code "));
+    Serial.println(state);
+    Serial.print(F("[CC1101] RSSI:\t\t"));
+    Serial.print(radio.getRSSI());
+    Serial.println(F(" dBm"));
+
+  }
+  signal_strength = radio.getRSSI();
+  if(signal_strength >= max_strength)
+  {
+    max_strength = signal_strength;
+    max_angle = angle;
+    }
+  
+  angle += 1.8;
+  }
+
+        //delay(18000);
+ 
+     Serial1.print("AT+SEND=0,32,");
+     Serial1.print("B|");
+     Serial1.print(lat, 6);
+     Serial1.print("|");
+     Serial1.print(lon, 6);
+     Serial1.print("|");
+      Serial1.print(max_strength, 1);
+     Serial1.print("|");
+     Serial1.println(max_angle);
+
+     Serial.print("AT+SEND=0,28,");
+     Serial.print(lat, 6);
+     Serial.print(" ");
+     Serial.println(lon, 6);
+     Serial.print(max_strength, 1);
+     Serial.print(" ");
+     Serial.println(max_angle);
+
+
+ 
+     
+
+
+
+
+
+
+
+
+}
