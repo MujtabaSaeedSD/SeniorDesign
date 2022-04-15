@@ -158,8 +158,10 @@ void loop() {
   signal_strength = radio.getRSSI();
   if(signal_strength >= max_strength)
   {
+     if(signal_strength <-20){
     max_strength = signal_strength;
     max_angle = angle;
+    }
     }
   
   angle += 1.8;
